@@ -11,7 +11,7 @@ $avdConfig = Join-Path $avdHome 'Pocketwise_Pixel.ini'
 
 if (-not $jdk) { throw 'Project-local Java is missing. Rebuild/setup Pocketwise first.' }
 if (-not (Test-Path -LiteralPath $emulator)) { throw 'Android emulator is missing under .build-tools\sdk.' }
-if (-not (Test-Path -LiteralPath (Join-Path $root 'Pocketwise.apk'))) { throw 'Pocketwise.apk is missing. Build it with .\build-apk.ps1 first.' }
+if (-not (Test-Path -LiteralPath (Join-Path $root 'BulsaPH.apk'))) { throw 'BulsaPH.apk is missing. Build it with .\build-apk.ps1 first.' }
 
 New-Item -ItemType Directory -Force -Path $avdHome, $userHome | Out-Null
 $env:JAVA_HOME = $jdk.FullName
@@ -64,7 +64,7 @@ for ($attempt = 0; $attempt -lt 90; $attempt++) {
 }
 if (-not $booted) { throw 'The Android emulator started but did not finish booting.' }
 
-& $adb -s $serial install -r (Join-Path $root 'Pocketwise.apk')
-if ($LASTEXITCODE -ne 0) { throw 'Could not install Pocketwise.apk in the emulator.' }
+& $adb -s $serial install -r (Join-Path $root 'BulsaPH.apk')
+if ($LASTEXITCODE -ne 0) { throw 'Could not install BulsaPH.apk in the emulator.' }
 & $adb -s $serial shell monkey -p ph.pocketwise.money 1 | Out-Null
 Write-Host 'Pocketwise is open in the Pixel 8 simulator. Close this PowerShell window when you are done.'

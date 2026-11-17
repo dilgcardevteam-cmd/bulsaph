@@ -5,15 +5,15 @@ A phone-friendly money tracker and planner that stores your data in this browser
 ## Open it locally
 
 1. Start Apache in XAMPP.
-2. On the computer, open `http://localhost/fundapp/`.
-3. On your phone connected to the same Wi-Fi, open `http://<computer-local-IP>/fundapp/` (allow Apache through your local firewall if needed).
+2. On the computer, open `http://localhost/bulsaph/`.
+3. On your phone connected to the same Wi-Fi, open `http://<computer-local-IP>/bulsaph/` (allow Apache through your local firewall if needed).
 4. Use your browser's **Add to Home Screen** option to install Pocketwise.
 
 The app shell works offline after its first successful load. Transactions and settings are saved by the browser; clearing the browser's site data will erase them.
 
 ## Install the Android app
 
-The ready-to-install debug APK is `Pocketwise.apk` in this folder. Copy it to your Android phone (USB, cloud drive, or another file transfer), open it, and allow your file app or browser to install unknown apps if Android asks. This is a locally built debug APK for personal installation; it is not published on Google Play.
+The ready-to-install debug APK is `BulsaPH.apk` in this folder. Copy it to your Android phone (USB, cloud drive, or another file transfer), open it, and allow your file app or browser to install unknown apps if Android asks. This is a locally built debug APK for personal installation; it is not published on Google Play.
 
 If Android blocks the install, check that the APK transfer completed and that you enabled **Install unknown apps** for the app you used to open it.
 
@@ -23,7 +23,7 @@ From PowerShell in this project folder, run `.\start-simulator.ps1`. It starts t
 
 ## Rebuild after changing the app
 
-Run `.uild-apk.ps1` in PowerShell. This syncs the web app into Android, builds a debug APK, and copies the result to `Pocketwise.apk`. The project-local Java and Android SDK used for the build are under `.build-tools`.
+Install JDK 21 and Android SDK Platform 35, then run `npm ci` and `.\build-apk.ps1` in PowerShell. The build script detects JDK 21 under `JAVA_HOME`, the standard Eclipse Adoptium install folder, or `.build-tools`; it detects the SDK under `ANDROID_HOME`, `ANDROID_SDK_ROOT`, the standard Android Studio SDK folder, or `.build-tools`. It syncs the web app, builds a debug APK, and copies it to `BulsaPH.apk`.
 
 ## Included
 

@@ -1,11 +1,44 @@
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
-$jdk = Get-ChildItem -LiteralPath (Join-Path $root '.build-tools\jdk') -Directory | Select-Object -First 1
-if (-not $jdk) { throw 'Project-local JDK not found under .build-tools\jdk.' }
-$env:JAVA_HOME = $jdk.FullName
-$env:ANDROID_HOME = Join-Path $root '.build-tools\sdk'
+$javaCandidates = @($env:JAVA_HOME)
+$localJdkRoot = Join-Path $root '.build-tools\jdk'
+if (Test-Path -LiteralPath $localJdkRoot) {
+    $javaCandidates += Get-ChildItem -LiteralPath $localJdkRoot -Directory | ForEach-Object FullName
+}
+$adoptiumRoot = Join-Path $env:ProgramFiles 'Eclipse Adoptium'
+if (Test-Path -LiteralPath $adoptiumRoot) {
+    $javaCandidates += Get-ChildItem -LiteralPath $adoptiumRoot -Directory | Sort-Object Name -Descending | ForEach-Object FullName
+}
+$javaCandidates += Join-Path $env:ProgramFiles 'Android\Android Studio\jbr'
+$javaHome = $null
+foreach ($candidate in ($javaCandidates | Select-Object -Unique)) {
+    $javaExe = Join-Path $candidate 'bin\java.exe'
+    if (-not (Test-Path -LiteralPath $javaExe)) { continue }
+    $versionOutput = (& $javaExe -version 2>&1 | Out-String)
+    if ($versionOutput -match 'version "21(?:\.|\")') {
+        $javaHome = $candidate
+        break
+    }
+}
+if (-not $javaHome) {
+    throw 'JDK 21 was not found. Install JDK 21 or set JAVA_HOME to its folder, then run this script again.'
+}
+
+$localSdk = Join-Path $root '.build-tools\sdk'
+$sdkCandidates = @($env:ANDROID_HOME, $env:ANDROID_SDK_ROOT, (Join-Path $env:LOCALAPPDATA 'Android\Sdk'), $localSdk) | Where-Object { $_ }
+$androidSdk = $sdkCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+if (-not $androidSdk) {
+    throw 'Android SDK was not found. Install Android SDK Platform 35 with Android Studio, then set ANDROID_HOME to the SDK folder.'
+}
+
+$env:JAVA_HOME = $javaHome
+$env:ANDROID_HOME = $androidSdk
 $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
-$env:Path = "$($jdk.FullName)\bin;$env:Path"
+$env:Path = "$(Join-Path $javaHome 'bin');$env:Path"
+
+if (-not (Test-Path -LiteralPath (Join-Path $root 'node_modules\.bin\esbuild.cmd')) -or -not (Test-Path -LiteralPath (Join-Path $root 'node_modules\.bin\cap.cmd'))) {
+    throw 'Node dependencies are missing. Run npm ci from the project folder, then retry.'
+}
 
 Push-Location $root
 try {
@@ -26,7 +59,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Capacitor asset sync failed.' }
     & (Join-Path $root 'android\gradlew.bat') -p android assembleDebug
     if ($LASTEXITCODE -ne 0) { throw 'Android APK build failed.' }
-    Copy-Item -LiteralPath (Join-Path $root 'android\app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $root 'Pocketwise.apk') -Force
-    Write-Host "APK ready: $(Join-Path $root 'Pocketwise.apk')"
+    Copy-Item -LiteralPath (Join-Path $root 'android\app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $root 'BulsaPH.apk') -Force
+    Write-Host "APK ready: $(Join-Path $root 'BulsaPH.apk')"
 }
 finally { Pop-Location }
