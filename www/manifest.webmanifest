@@ -1,0 +1,14 @@
+{
+  "name": "BulsaPH — Alagaan ang Bawat Piso",
+  "short_name": "BulsaPH",
+  "description": "A private, local-first money planner for tracking spending, budgets, and savings goals.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#002c76",
+  "theme_color": "#002c76",
+  "icons": [
+    { "src": "app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

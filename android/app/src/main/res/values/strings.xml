@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BulsaPH</string>
+    <string name="title_activity_main">BulsaPH</string>
+    <string name="package_name">ph.pocketwise.money</string>
+    <string name="custom_url_scheme">ph.pocketwise.money</string>
+</resources>

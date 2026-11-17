@@ -1,0 +1,27 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Node / web build outputs
+node_modules/
+dist/
+build/
+
+# Android emulator / SDK tool artifacts
+.android-user/
+.avd/
+.build-tools/
+emulator-app-data-backup/
+*.img
+*.img.qcow2
+*.zip
+*.apk
+*.log
+
+# Local generated project files
+*.tmp
+*.temp
+
+# Keep source files tracked
+!README.md

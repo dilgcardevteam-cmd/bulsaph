@@ -1,0 +1,8 @@
+{
+  "appId": "ph.pocketwise.money",
+  "appName": "BulsaPH",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
