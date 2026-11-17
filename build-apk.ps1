@@ -57,6 +57,25 @@ try {
     Copy-Item -LiteralPath (Join-Path $root 'sw.js') -Destination (Join-Path $root 'www\sw.js') -Force
     & (Join-Path $root 'node_modules\.bin\cap.cmd') sync android
     if ($LASTEXITCODE -ne 0) { throw 'Capacitor asset sync failed.' }
+
+    $cordovaLibDirs = @(
+        (Join-Path $root 'android\capacitor-cordova-android-plugins\src\main\libs'),
+        (Join-Path $root 'android\capacitor-cordova-android-plugins\libs')
+    )
+    $hasLocalAars = $cordovaLibDirs | Where-Object {
+        (Test-Path -LiteralPath $_) -and (Get-ChildItem -LiteralPath $_ -Filter '*.aar' -File -ErrorAction SilentlyContinue | Select-Object -First 1)
+    } | Select-Object -First 1
+    if (-not $hasLocalAars) {
+        $cordovaGradle = Join-Path $root 'android\capacitor-cordova-android-plugins\build.gradle'
+        if (Test-Path -LiteralPath $cordovaGradle) {
+            $gradleText = [System.IO.File]::ReadAllText($cordovaGradle)
+            $withoutFlatDir = [regex]::Replace($gradleText, "(?m)^[\t ]*flatDir[\t ]*\{\r?\n[\t ]*dirs 'src/main/libs', 'libs'\r?\n[\t ]*\}\r?\n?", '')
+            if ($withoutFlatDir -ne $gradleText) {
+                [System.IO.File]::WriteAllText($cordovaGradle, $withoutFlatDir)
+            }
+        }
+    }
+
     & (Join-Path $root 'android\gradlew.bat') -p android assembleDebug
     if ($LASTEXITCODE -ne 0) { throw 'Android APK build failed.' }
     Copy-Item -LiteralPath (Join-Path $root 'android\app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $root 'BulsaPH.apk') -Force
